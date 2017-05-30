@@ -32,6 +32,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         checkPermission()
+        LoadPokemon()
     }
 
     var ACCESSLOCATION = 123
@@ -123,17 +124,29 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
     }
 
+    var oldLocation:Location?=null
+
     inner class myThread:Thread{
         constructor():super() {
-
+            oldLocation = Location("s")
+            oldLocation!!.longitude = 0.0
+            oldLocation!!.longitude = 0.0
         }
 
         override fun run() {
             while (true) {
                 try {
+
+                    if(oldLocation!!.distanceTo(location) == 0f) {
+                        continue
+                    }
+
+                    oldLocation = location
+
                     runOnUiThread {
                         mMap!!.clear()
 
+                        // Show me
                         val sydney = LatLng(location!!.latitude, location!!.longitude)
                         mMap!!.addMarker(MarkerOptions()
                                 .position(sydney)
@@ -141,6 +154,23 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                                 .snippet("here is my location")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario)))
                         mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14f))
+
+                        // Show Pokemon
+
+                        for (i in 0..listPokemons.size - 1) {
+
+                            var newPokemon = listPokemons[i]
+
+                            if (newPokemon.isCaught == false) {
+                                // Showing list of Pokemon on Map
+                                val pokemonLoc = LatLng(newPokemon.lat!!, newPokemon.lng!!)
+                                mMap!!.addMarker(MarkerOptions()
+                                        .position(pokemonLoc)
+                                        .title(newPokemon.name)
+                                        .snippet(newPokemon.des)
+                                        .icon(BitmapDescriptorFactory.fromResource(newPokemon.image!!)))
+                            }
+                        }
                     }
 
                     Thread.sleep(1000)
@@ -150,5 +180,14 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    var listPokemons = ArrayList<Pokemon>()
+
+    fun LoadPokemon() {
+
+        listPokemons.add( Pokemon("Charmander", "Fire Starter", R.drawable.charmander, 55.0, 37.77, -122.0))
+        listPokemons.add( Pokemon("Bulbasaur", "Forest Gump", R.drawable.bulbasaur, 90.5, 37.79, -122.0))
+        listPokemons.add( Pokemon("Squirtle", "Beach Pump", R.drawable.squirtle, 45.0, 37.78, -122.0))
     }
 }
