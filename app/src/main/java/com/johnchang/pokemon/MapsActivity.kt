@@ -174,7 +174,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                                     newPokemon.isCaught = true
                                     listPokemons[i] = newPokemon
                                     playerPower += newPokemon.power!!
-                                    Toast.makeText(applicationContext, "You caught a new Pokemon! You power is"
+                                    Toast.makeText(applicationContext, "You caught a new Pokemon! You power is "
                                             + playerPower, Toast.LENGTH_LONG).show()
                                 }
                             }
