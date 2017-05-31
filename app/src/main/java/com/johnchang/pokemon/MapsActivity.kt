@@ -163,12 +163,20 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
                             if (newPokemon.isCaught == false) {
                                 // Showing list of Pokemon on Map
-                                val pokemonLoc = LatLng(newPokemon.lat!!, newPokemon.lng!!)
+                                val pokemonLoc = LatLng(newPokemon.location!!.latitude, newPokemon.location!!.longitude)
                                 mMap!!.addMarker(MarkerOptions()
                                         .position(pokemonLoc)
                                         .title(newPokemon.name)
-                                        .snippet(newPokemon.des)
+                                        .snippet(newPokemon.des + ", power:" + newPokemon!!.power)
                                         .icon(BitmapDescriptorFactory.fromResource(newPokemon.image!!)))
+
+                                if (location!!.distanceTo(newPokemon.location)<2) {
+                                    newPokemon.isCaught = true
+                                    listPokemons[i] = newPokemon
+                                    playerPower += newPokemon.power!!
+                                    Toast.makeText(applicationContext, "You caught a new Pokemon! You power is"
+                                            + playerPower, Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
                     }
@@ -182,6 +190,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
+    var playerPower = 0.0
     var listPokemons = ArrayList<Pokemon>()
 
     fun LoadPokemon() {
